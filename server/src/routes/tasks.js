@@ -1,8 +1,9 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createTask, updateTaskStatus,getTaskById,getTasks,updateTask,deleteTask
+import {
+  createTask, getTaskById, getTasks, getTaskofUser, updateTask, deleteTask
 
- } from '../controllers/tasks.js';
+} from '../controllers/tasks.js';
 import { validateRequest } from '../middleware/validateRequest.js';
 import { authenticateUser, authorizeAdmin } from '../middleware/auth.js';
 
@@ -23,35 +24,13 @@ router.post(
   createTask
 );
 
-router.patch(
-  '/:id/status',
-  authenticateUser,
-  [
-    body('status').isIn(['pending', 'in_progress', 'done']).withMessage('Invalid status')
-  ],
-  validateRequest,
-  updateTaskStatus
-);
+router.get('/task/:id',
+  //  authenticateUser, authorizeAdmin,
+  getTaskById);
 
-router.get('/task/:id', authenticateUser, authorizeAdmin,getTaskById );
-
-router.get('/tasks', authenticateUser, getTasks);
-
+  router.get('/getall', getTasks);
+router.get('/userTasks', authenticateUser, getTaskofUser);
 router.patch('/update/:id', authenticateUser, authorizeAdmin, updateTask);
-
-router.patch('/update/status/:id', authenticateUser, authorizeAdmin, updateTaskStatus);
-
 router.delete('/delete/:id', authenticateUser, authorizeAdmin, deleteTask);
-
-// router.patch(
-//   '/:id/assign',
-//   authenticateUser,
-//   authorizeAdmin,
-//   [
-//     body('userId').notEmpty().withMessage('User ID is required')
-//   ],
-//   validateRequest,
-//   assignTask
-// );
 
 export default router;

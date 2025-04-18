@@ -57,6 +57,7 @@ export const login = async (req, res) => {
     });
 
     res.json({
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -92,6 +93,70 @@ export const getallUsers = async (req, res) => {
     console.log(user)
     res.json(user);
   } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+export const alluserInfo = async (req, res) => {
+  try {
+    const users = await User.aggregate([
+      {
+        $project: {
+          password: 0
+        }
+      },
+      {
+        $lookup: {
+          from: 'projects',
+          let: { userId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ['$$userId', '$users']
+                }
+              }
+            }
+          ],
+          as: 'projects'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: '_id',
+          foreignField: 'assignedTo',
+          as: 'tasks'
+        }
+      }
+    ]);
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+export const getusername = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({ message: 'UserId not provided' });
+    }
+
+    const user = await User.findOne({ _id: userId }).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ name: user.name, message: "Username fetched successfully" });
+
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };

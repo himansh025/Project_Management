@@ -1,11 +1,12 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createComment, deleteComment } from '../controllers/comments.js';
+import { createComment, deleteComment, getCommentsByTask } from '../controllers/comments.js';
 import { validateRequest } from '../middleware/validateRequest.js';
 import { authenticateUser } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Create a new comment
 router.post(
   '/',
   authenticateUser,
@@ -17,6 +18,10 @@ router.post(
   createComment
 );
 
-router.delete('/:id', authenticateUser, deleteComment);
+// Get comments for a task
+router.get('/all/:taskId', authenticateUser, getCommentsByTask);
+
+// Delete a comment
+router.delete('/delete/:commentId', authenticateUser, deleteComment);
 
 export default router;

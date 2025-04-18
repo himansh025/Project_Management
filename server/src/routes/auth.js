@@ -1,8 +1,8 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { register, login, logout, getCurrentUser,getallUsers } from '../controllers/auth.js';
+import { register, login, logout, getCurrentUser,getallUsers,getusername,alluserInfo } from '../controllers/auth.js';
 import { validateRequest } from '../middleware/validateRequest.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, authorizeAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -24,7 +24,9 @@ router.post(
 );
 
 router.post('/logout', authenticateUser, logout);
-router.get('/me', getCurrentUser);
+router.get('/me', authenticateUser,getCurrentUser);
 router.get('/alluser', getallUsers);
+router.get('/userinfo',authenticateUser,authorizeAdmin, alluserInfo);
 
+router.get('/username/:userId', getusername);
 export default router;

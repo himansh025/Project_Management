@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { createProject, getAllProjects, getProjectById, updateProject, deleteProject,deleteProject,removeUserFromProject,addUserToProject } from '../controllers/projects.js';
+import { createProject, getAllProjects, getProjectById, updateProject, deleteProject } from '../controllers/projects.js';
 import { validateRequest } from '../middleware/validateRequest.js';
 import { authenticateUser, authorizeAdmin } from '../middleware/auth.js';
 
@@ -35,10 +35,6 @@ router.patch(
 
 router.delete('/delete/:id', authenticateUser, authorizeAdmin, deleteProject);
 
-router.post('/project/userAdd', authenticateUser, authorizeAdmin, addUserToProject);
-
-router.delete('/project/userRemove', authenticateUser, authorizeAdmin, removeUserFromProject);
-
-router.delete('/delete/project', authenticateUser, authorizeAdmin, deleteProject);
+router.delete('/delete/:id', authenticateUser, authorizeAdmin, deleteProject);
 
 export default router;

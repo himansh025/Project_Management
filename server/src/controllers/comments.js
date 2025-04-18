@@ -25,19 +25,42 @@ export const createComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
   try {
-    const comment = await Comment.findById(req.params.id);
+    const { commentId } = req.params;
+
+    const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
     // Allow deletion if user is admin or the comment author
-    if (req.user.role !== 'admin' && comment.user.toString() !== req.user.id) {
+    if (req.user.role !== 'admin' && !comment.user.equals(req.user.id)) {
       return res.status(403).json({ message: 'Not authorized to delete this comment' });
     }
 
-    await comment.remove();
+    await Comment.findByIdAndDelete(commentId);
+
+
     res.json({ message: 'Comment deleted successfully' });
+
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    res.status(500
+    )}}
+export const getCommentsByTask = async (req, res) => {
+  try {
+    const { taskId } = req.query;
+    
+    if (!taskId) {
+      return res.status(400).json({ message: 'Task ID is required' });
+    }
+    
+    const comments = await Comment.find({ task: taskId })
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 });
+    
+    res.json(comments);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
