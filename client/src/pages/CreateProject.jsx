@@ -5,12 +5,9 @@ import { z } from 'zod';
 import { ClipboardList, Users } from 'lucide-react';
 import axiosInstance from '../config/apiconfig';
 
-const taskSchema = z.object({
+const projectSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  assignedTo: z.string().min(1, 'You must select a user'),
-  status: z.enum(['todo', 'in_progress', 'review', 'completed']),
-  priority: z.enum(['low', 'medium', 'high', 'urgent'])
+  description: z.string().min(10, 'Description must be at least 10 characters')
 });
 
 function CreateProject({ onSubmit,onCancel }) {
@@ -18,18 +15,17 @@ function CreateProject({ onSubmit,onCancel }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
-    resolver: zodResolver(taskSchema),
-    defaultValues: {
-      status: 'todo',
-      priority: 'medium'
-    }
+    resolver: zodResolver(projectSchema)
   });
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
         const response = await axiosInstance.get('/auth/alluser');
-        setUsers(response.data);
+        // console.log(response.data,"users")
+        const onlyuser= response.data.filter((users)=>users.role!="admin")
+        // console.log(onlyuser)
+        setUsers(onlyuser);
       } catch (error) {
         console.error('Failed to fetch users:', error);
       } finally {
@@ -42,7 +38,9 @@ function CreateProject({ onSubmit,onCancel }) {
 
   // This function handles the form submission
   const handleFormSubmit = async (formData) => {
+    console.log(" clicked")
     try {
+      console.log("formdata",formData)
       // Call the parent's onSubmit callback with the form data
       await onSubmit(formData);
     } catch (error) {
@@ -54,19 +52,19 @@ function CreateProject({ onSubmit,onCancel }) {
 
   return (
     <div className="bg-white  max-w-6xl rounded-lg shadow-md p-6">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center p-10 mb-6">
         <ClipboardList className="h-8 w-8 text-blue-600 mr-3" />
-        <h3 className="text-xl font-bold">Create New Task</h3>
+        <h3 className="text-xl font-bold">Create New Project</h3>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Task Title</label>
+          <label className="block text-sm font-medium text-gray-700">Project Title</label>
           <input
             type="text"
             {...register('title')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Enter task title"
+            placeholder="Enter Project title"
           />
           {errors.title && (
             <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -79,64 +77,10 @@ function CreateProject({ onSubmit,onCancel }) {
             {...register('description')}
             rows={3}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Enter task description"
+            placeholder="Enter Project description"
           />
           {errors.description && (
             <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Assign To</label>
-            <select
-              {...register('assignedTo')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="">Select User</option>
-              {isLoading ? (
-                <option disabled>Loading users...</option>
-              ) : (
-                users?.map((user,index) => (
-                  <option key={index} value={user.id}>{user.name}</option>
-                ))
-              )}
-            </select>
-            {errors.assignedTo && (
-              <p className="mt-1 text-sm text-red-600">{errors.assignedTo.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Priority</label>
-            <select
-              {...register('priority')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
-            {errors.priority && (
-              <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Status</label>
-          <select
-            {...register('status')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="todo">To Do</option>
-            <option value="in_progress">In Progress</option>
-            <option value="review">Review</option>
-            <option value="completed">Completed</option>
-          </select>
-          {errors.status && (
-            <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
           )}
         </div>
 
