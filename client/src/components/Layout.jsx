@@ -13,7 +13,7 @@ function Layout() {
         <Sidebar />
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-4 md:ml-10 md:mt-5">
+      <main className="flex-1 mt-5 overflow-y-auto p-4 md:ml-10 md:mt-5">
         <Outlet />
       </main>
     </div>
