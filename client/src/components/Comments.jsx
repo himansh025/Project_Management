@@ -15,7 +15,7 @@ const Comments = ({ taskId }) => {
     const fetchComments = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(`comments/all/${taskId}`);
+        const response = await axiosInstance.get(`/comments/all/${taskId}`);
         console.log(response.data)
         setComments(response.data);
       } catch (error) {

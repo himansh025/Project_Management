@@ -19,7 +19,7 @@ router.post(
 );
 
 // Get comments for a task
-router.get('/all/:taskId', authenticateUser, getCommentsByTask);
+router.get('/all/:taskId',  getCommentsByTask);
 
 // Delete a comment
 router.delete('/delete/:commentId', authenticateUser, deleteComment);

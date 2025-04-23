@@ -51,18 +51,18 @@ const TaskCard = ({ task, index, onEdit, onDelete, userMap }) => {
               {task.status.replace("_", " ")}
             </span>
           </div>
+          {/* Comment button to toggle comments */}
+          <button
+            type="button"
+            onClick={() => setShowComments(!showComments)}
+            className="p-1 rounded hover:bg-gray-100 transition"
+            title="Show Comments"
+          >
+            <MessageSquare className="h-4 w-4" />
+          </button>
+          
           {user && (
             <div className="flex gap-2">
-              {/* Comment button to toggle comments */}
-              <button
-                type="button"
-                onClick={() => setShowComments(!showComments)}
-                className="p-1 rounded hover:bg-gray-100 transition"
-                title="Show Comments"
-              >
-                <MessageSquare className="h-4 w-4" />
-              </button>
-              
               {/* Edit is visible to all logged-in users */}
               <button
                 type="button"

@@ -46,9 +46,10 @@ export const deleteComment = async (req, res) => {
     console.error('Error deleting comment:', error);
     res.status(500
     )}}
+
 export const getCommentsByTask = async (req, res) => {
   try {
-    const { taskId } = req.query;
+    const { taskId } = req.params;
     
     if (!taskId) {
       return res.status(400).json({ message: 'Task ID is required' });
