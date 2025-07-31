@@ -3,7 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import serverless from 'serverless-http';  // ADD THIS
+
 
 import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
@@ -41,9 +41,6 @@ app.use('/api/comments', commentRoutes);
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB error:', err));
-
-// Export the serverless handler
-export const handler = serverless(app);
 
 // For local development (not used in Vercel)
 if (process.env.NODE_ENV !== 'production') {
