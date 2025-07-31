@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-
 import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import taskRoutes from './routes/tasks.js';
@@ -14,8 +13,9 @@ dotenv.config();
 
 const app = express();
 
+// CORS setup
 const allowedOrigins = [
-  'https://project-management-3mgq.vercel.app',  // frontend
+  'https://project-management-3mgq.vercel.app'
 ];
 
 app.use(cors({
@@ -28,10 +28,16 @@ app.use(cors({
   },
   credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// 👇 Root route
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
+
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
@@ -42,8 +48,6 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB error:', err));
 
-// For local development (not used in Vercel)
-if (process.env.NODE_ENV !== 'production') {
+
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
