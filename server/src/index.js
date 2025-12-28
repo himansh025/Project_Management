@@ -17,7 +17,9 @@ const app = express();
 const allowedOrigins = [
   'https://project-management-3mgq.vercel.app'
 ];
-
+app.use("/api/health",async(req,res)=>{
+res.send("working fine")
+});
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
